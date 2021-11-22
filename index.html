@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles/css/style.css">
+  <link rel="stylesheet" href="styles/listmulti.css">
+  <script defer="defer" src="scripts/lib/blank-block.js"></script>
+  <script defer="defer" src="scripts/index.js"></script>
+  <title>Document</title>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="listmulti" title="">
+
+      <div class="listmulti__box" >
+        <a data-listmulti-value="200" class="listmulti__value" title="Products 200" >Products 200</a>
+        <div class="listmulti__svg-select">
+          <svg class="svg-select" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="15px" height="5px" viewBox="0 0 0.9 0.3">
+            <path class="svg-select__path" d="M0.4 0.3l-0.4 -0.3c0.3,0 0.6,0 0.9,0 -0.1,0.1 -0.3,0.2 -0.5,0.3z"/>
+          </svg>
+        </div>
+      </div>
+  
+  
+          <ul class='listmulti__ul listmulti__ul_sub1 active'>
+            <li>
+              <a data-listmulti-value="100" href='#'>Product 100</a>
+              <ul class='listmulti__ul listmulti__ul_sub2 '>
+                <li ><a href='#'>Sub Item1</a></li>
+                <li><a href='#'>Sub Item2</a></li>
+              </ul>
+            </li>
+
+            <li>
+              <a href='#' data-listmulti-short="Pr200">Product 200</a>
+              <ul class='listmulti__ul listmulti__ul_sub2 active'>
+
+                <li>
+                  <a data-listmulti-short="lolo1" href='#'>LOLO Item1</a>
+                  <ul class='listmulti__ul listmulti__ul_sub3 active'>
+                    <li>
+                      <a data-listmulti-short="el1" href='#'>element1</a>
+                    </li>
+                    <li>
+                      <a data-listmulti-short="el2" href='#'>element2</a>
+                    </li>
+                  </ul>
+
+                </li>
+
+                <li>
+                  <a data-listmulti-short="lolo2" href='#'>LOLO Item2</a>
+                </li>
+
+                <li>
+                  <a data-listmulti-short="lolo3" href='#'>LOLO Item3</a>
+                </li>
+
+              </ul>
+            </li>
+
+            <li>
+              <a data-listmulti-value="300" href='#'>Product 300</a>
+            </li>
+
+          </ul>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+
+:root {
+  --color-elements-main: #235ad1;
+}
+
+a,li,ul,div  {
+  box-sizing: border-box;
+}
+.wrapper {
+  width: 170px;
+  height: 30px;
+  max-width: 170px;
+  max-height: 30px;
+  box-sizing: border-box;
+}
+
+a:link,
+a:visited,
+a:hover,
+a:active {
+  text-decoration: none;
+  color: rgb(134, 15, 15);
+}
+
+.svg-select__path{
+  fill: var(--color-elements-main);
+  transform: rotate(180);
+}
