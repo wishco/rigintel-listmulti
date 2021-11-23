@@ -1,17 +1,30 @@
 
 :root {
   --color-elements-main: #235ad1;
+  --color-elements-background: black;
+  --color-elements-text: white;
+  /* --color-elements-background: white; */
 }
 
 a,li,ul,div  {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
+
 }
+
+body {
+  /* background-color: black; */
+  background-color: white;
+}
+
 .wrapper {
   width: 170px;
   height: 30px;
   max-width: 170px;
   max-height: 30px;
   box-sizing: border-box;
+
 }
 
 a:link,

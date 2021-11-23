@@ -3,7 +3,14 @@ var SELECTOR_FOR_FIND = 'ul'
 var PREFIX_VALUE = 'value'
 
 var listmultiStructure = new createBlankBlock('listmulti')
+
+
+
 var listmultiAll = document.querySelectorAll(listmultiStructure.getClassName()) // .listmulti
+
+var m = document.getElementsByClassName(listmultiStructure.getClass())
+
+console.log("aaaaaaaaaaaaa", m);
 
 var getData = dataMain() // данные
 
@@ -48,15 +55,28 @@ var handlerClick = function (e) {
 
 
   // clearActiveClases: Сброс у всех блоков, класс ACTIVE
+  // function clearActiveClases(e) {
+  //   var clearActivesAllBlocks = document.querySelectorAll(this.getClassName())
+  //   clearActivesAllBlocks.forEach(el => {
+  //     var activeClasses = el.querySelectorAll(this.getClassNameActive())
+  //     activeClasses.forEach(_el => {
+  //       _el.classList.remove(this.active)
+  //     })
+  //   })
+  // }
   function clearActiveClases(e) {
     var clearActivesAllBlocks = document.querySelectorAll(this.getClassName())
-    clearActivesAllBlocks.forEach(el => {
+    function fn_clearActivesAllBlocks(el) {
       var activeClasses = el.querySelectorAll(this.getClassNameActive())
-      activeClasses.forEach(_el => {
+      function fn_removeClass(_el) {
         _el.classList.remove(this.active)
-      })
-    })
+      }
+      activeClasses.forEach(fn_removeClass.bind(this))
+    }
+    clearActivesAllBlocks.forEach(fn_clearActivesAllBlocks.bind(this))
   }
+
+
   // getRootNodeOfBlock: НОДА, получить 'главную' ноду (главный родительский блок)
   function getRootNodeOfBlock(node) {
     if (isNodeRootBlock.bind(this)(node)) return node
@@ -85,25 +105,16 @@ var handlerClick = function (e) {
 }
 
 
-
-// Добавляем, обработчики событий на блоки
-listmultiAll.forEach((el, index) => {
+function fh_linkHandler(el) {
+  console.log("el1");
+  console.log(el);
+  console.log("el2");
   var currHandler = handlerClick.bind(listmultiStructure)
   el.addEventListener('click', currHandler, false)
-})
+}
+// Добавляем, обработчики событий на блоки
+listmultiAll.forEach(fh_linkHandler.bind(this))
 
-
-
-
-// var PREFX_CLASS = '.'
-// var BEM_BLOCK = 'listmulti'
-// var BEM_E = '__'
-// var BEM_M = '_'
-// var SELECTOR_FOR_FIND = 'ul'
-// var ACTIVE = 'active'
-// var TYPE_LISTENER = 'click'
-// var DATA_ATTR_PREFIX = 'data' + '-' + BEM_BLOCK + '-'
-// var PREFIX_VALUE = 'value'
 
 
 
