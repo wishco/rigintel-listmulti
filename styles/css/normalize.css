@@ -1,21 +1,22 @@
 
 :root {
   --color-elements-main: #235ad1;
-  --color-elements-background: black;
   --color-elements-text: white;
-  /* --color-elements-background: white; */
+  --color-elements-text: black;
+  /* --color-elements-background: black; */
+  --color-elements-background: white;
 }
 
 a,li,ul,div  {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-
+  display: block;
 }
 
 body {
-  /* background-color: black; */
-  background-color: white;
+  background-color: black;
+  /* background-color: white; */
 }
 
 .wrapper {
@@ -32,10 +33,19 @@ a:visited,
 a:hover,
 a:active {
   text-decoration: none;
-  color: rgb(134, 15, 15);
+  /* color: rgb(134, 15, 15); */
+}
+
+.svg-select{
+  transform: rotate(0deg);
+}
+.svg-select_r270 {
+  transform: rotate(270deg);
+}
+.svg-select_r90 {
+  transform: rotate(90deg);
 }
 
 .svg-select__path{
   fill: var(--color-elements-main);
-  transform: rotate(180);
 }

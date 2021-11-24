@@ -45,13 +45,15 @@
   }
   &__ul li {
     position: relative;
-    padding: 0px 8px 0px 8px;
     white-space: nowrap;
+
   }
-  &__ul a {
+  &__text {
     text-decoration: none;
     user-select: inherit;
     color: var(--color-elements-text);
+    // background-color: aqua;
+    padding: 1px 8px 1px 8px;
   }
  
   &__box {
@@ -65,6 +67,10 @@
     user-select: inherit;
     width: 100%;
     height: 100%;
+  }
+  &__box.active {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
   }
   &__value {
     user-select: inherit;
