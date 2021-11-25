@@ -1,17 +1,17 @@
 
-var SELECTOR_NEXT_ELEMENT = 'ul' // перебор по ноде, вглубь (сокращаем ноду) т.е. идём к потомку
-var SELECTOR_PREVIOS_ELEMENT = 'ul' // перебор по ноде, вверх (увеличиваем ноду) т.е. идём к parent
+var SELECTOR_NEXT_ACTIVE = 'ul' // перебор по ноде, вглубь (сокращаем ноду) т.е. идём к потомку
+var SELECTOR_PREVIOS_ACTIVE = 'ul' // перебор по ноде, вверх (увеличиваем ноду) т.е. идём к parent
+var SELECTOR_PREVIOS_TEXT = 'li' // перебор по ноде, вверх (увеличиваем ноду) т.е. идём к parent
+
 var SELECTOR_OUT = 'box' // селектор, куда будем писать данные
 var SELECTOR_IN = 'text' // селектор, откуда будем брать данные
 
 var PREFIX_VALUE = 'value' // префикс value
 var PREFIX_SHORT = 'short' // префикс short 
-var SIMBOL_SHORT = "/"
+var SHORT_SEPARATOR = "/"
 
 var listmultiStructure = new createBlankBlock('listmulti')
-
 var listmultiAll = document.querySelectorAll(listmultiStructure.getClassName()) // .listmulti
-
 
 var getData = dataMain() // данные
 
@@ -29,7 +29,7 @@ var handlerClick = function (e) {
   var target = isMainBlockClicked ? e.target : e.target.parentElement
 
   // nodeForAction: нода, ищем ближайший селектор для последущих действий
-  var nodeForAction = target.querySelector(SELECTOR_NEXT_ELEMENT)
+  var nodeForAction = target.querySelector(SELECTOR_NEXT_ACTIVE)
 
   // isNoLastBlockClicked: BOOL состояние нажали/нет, на последний блок в списке
   // false:  элемент списка: не последний, при нажатии снимаем прежнюю ACTIVE у элементов и создаем у дерева новую ACTIVE
@@ -60,7 +60,7 @@ var handlerClick = function (e) {
       nodeForActive.classList.add(this.active) // делаем  активными элементы цепочки
     }
     // элементы, которые находятся в цепочке вложения от текущего (запускаем, Action по цепочке нод)
-    changePreviosElements.bind(this)(nodeForAction, ActionForEachElementOfChain)
+    taskPreviosElements.bind(this)(nodeForAction, SELECTOR_PREVIOS_ACTIVE, ActionForEachElementOfChain)
     return // выходим из функции, сделали всё что надо
   }
 
@@ -68,39 +68,44 @@ var handlerClick = function (e) {
   var root = getRootNodeOfBlock.bind(this)(e.target)
   var nodeForChangingAttributes = root.querySelector(this.getClassName(PREFIX_VALUE))
   updateAttributeFromSourceToTarget.bind(this)(e.target, nodeForChangingAttributes, PREFIX_VALUE)
-  updateInnerHtmlFromValue.bind(this)(e.target.innerHTML, nodeForChangingAttributes, PREFIX_VALUE)
   clearActiveClases.bind(this)(e)
 
   var nodeIn = target.querySelector(this.getClassName(SELECTOR_IN))
   var getInObjData = {}
-  getInObjData.short = getAttrtFromNode.bind(this)(nodeIn, PREFIX_SHORT) || nodeIn.innerHTML
+  getInObjData.short = []
+  getInObjData.text = []
   getInObjData.value = getAttrtFromNode.bind(this)(nodeIn, PREFIX_VALUE)
 
-  console.log("getInObjData:", getInObjData);
+  function ActionForEachElementOfChainIfClickOnLastElement(node) { // Action по цепочке нод
+    var _nodeIn = node.querySelector(this.getClassName(SELECTOR_IN))
+    var newShortChain = getAttrtFromNode.bind(this)(_nodeIn, PREFIX_SHORT) || _nodeIn.innerHTML
+    getInObjData.short.unshift(newShortChain) // добавляем, каждый след. элемент в начало массива
+    getInObjData.text.unshift(_nodeIn.innerHTML)
 
+  }
+  taskPreviosElements.bind(this)(nodeIn, SELECTOR_PREVIOS_TEXT, ActionForEachElementOfChainIfClickOnLastElement)
 
+  var shortResult = getInObjData.short.join(SHORT_SEPARATOR)
+  var textResult = getInObjData.text.join(' ' + SHORT_SEPARATOR + ' ')
+  updateInnerHtmlFromValue.bind(this)(shortResult, nodeForChangingAttributes, PREFIX_VALUE)
+  root.setAttribute('title', textResult)
 
-  function getAttrtFromNode(node, prefix) { // получить атрибут, если он есть иначе undefined
+  // Конец. Обработчики закончили работу  
+
+  // получить атрибут, если он есть иначе undefined
+  function getAttrtFromNode(node, prefix) {
     var attr_string = this.getAttribute(prefix)
     var hasShort = node.hasAttribute(attr_string)
     return hasShort ? node.getAttribute(attr_string) : void 0
   }
 
-
-
-
-
-
-
-
-
-
   // Изменить элементы от текущей ноды, до root 
-  function changePreviosElements(nodeCurr, fnChanging) {
+  function taskPreviosElements(nodeCurr, selector, fnChanging) {
     var prev = nodeCurr
     do { // цикл пока не найдем root блока или не получим null(null - в ноде, нет необходимых условий)
-      var prev = getPreviosElement.bind(this)(prev, SELECTOR_PREVIOS_ELEMENT)
+      var prev = getPreviosElement.bind(this)(prev, selector)
       if (prev) fnChanging.call(this, prev)
+
     }
     while (prev !== null);
   }
@@ -108,6 +113,7 @@ var handlerClick = function (e) {
   // получить прошлую ноду если подходит по селектору (ведем поиск к родителю)
   function getPreviosElement(nodeCurr, selector) {
     var nodeParent = nodeCurr.parentElement
+
     if (!nodeParent) return null // если не нашли ноду, то выходим
     var isIntoRootElement = nodeParent.classList.contains(this.getClass())
     if (isIntoRootElement) return null // если Root елемент, то выходим
@@ -155,37 +161,123 @@ var handlerClick = function (e) {
   }
 }
 
+function createStructureHtmlFromObject(mainNode) {
+  var newDiv = document.createElement('div')
+  newDiv.innerHTML = getTemplateBlank()
+  newDiv.classList.add(this.getClass())
+  mainNode.append(newDiv)
+
+  console.log("createStructureHtmlFromObject");
+  console.log(this);
+}
+
+var mainNode = document.querySelector('.wrapper1')
+createStructureHtmlFromObject.bind(listmultiStructure)(mainNode)
+
+var t = mainNode.querySelector(".listmulti__value")
+console.log(t);
+
+console.log(dataMain());
+
+
+
+
+console.log(document.body)
+
+
+
+
+function dataMain() {
+  console.log(111111111111111);
+  return [
+    {
+      name: "item1",
+      short: 'знач1',
+      text: 'Значение1',
+      value: 100
+    },
+    {
+      name: "item2",
+      short: 'знач2',
+      text: 'Значение2',
+      sub: [
+        {
+          name: "sub1-item1",
+          short: 'sub1-знач1',
+          text: 'sub1-Значение1',
+          value: 1100
+        },
+        {
+          name: "sub1-item1",
+          short: 'sub1-знач1',
+          text: 'sub1-Значение1',
+          sub: [
+            {
+              name: "sub2-item1",
+              short: 'sub2-знач1',
+              text: 'sub2-Значение1',
+              value: 2100
+            },
+            {
+              name: "sub2-item2",
+              short: 'sub2-знач2',
+              text: 'sub2-Значение2',
+              value: 2200
+            }
+          ]
+        },
+        {
+          name: "sub1-item1",
+          short: 'sub1-знач1',
+          text: 'sub1-Значение1',
+          value: 1300
+        }
+      ]
+    },
+    {
+      name: "item3",
+      short: 'знач3',
+      text: 'Значение3',
+      value: 300
+    },
+  ]
+}
+
+// sub: {
+//   values: [200, 190, 180, 170, 160, 150],
+// }
+
+function getTemplateItemWrapper() {
+  `<ul class='listmulti__ul'>
+  </ul>`
+}
+
+function getTemplateItem() {
+  `<li class='listmulti__li'>
+    <a class="listmulti__text" href='#'></a>
+  </li>`
+}
+
+function getTemplateBlank() {
+  return `
+ <div data-listmulti-out="data-listmulti-out" class="listmulti__box">
+   <a class="listmulti__value"></a>
+   <div class="listmulti__svg-select">
+     <svg class="svg-select" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="15px" height="5px" viewBox="0 0 0.9 0.3">
+       <path class="svg-select__path" d="M0.4 0.3l-0.4 -0.3c0.3,0 0.6,0 0.9,0 -0.1,0.1 -0.3,0.2 -0.5,0.3z"/>
+     </svg>
+   </div>
+ </div>
+`
+}
+
+
+
+
+
 function fh_linkHandler(el) {
   var currHandler = handlerClick.bind(listmultiStructure)
   el.addEventListener('click', currHandler, false)
 }
 // Добавляем, обработчики событий на блоки
 listmultiAll.forEach(fh_linkHandler.bind(this))
-
-
-
-function dataMain() {
-  return
-  [
-    {
-      name: "item1",
-      textName: 'Значение1',
-      arr: [200, 190, 180, 170, 160, 150]
-    },
-    {
-      name: "item2",
-      textName: 'Значение2',
-      arr: [200, 190, 180, 170, 160, 150]
-    },
-    {
-      name: "item3",
-      textName: 'Значение3',
-      arr: [200, 190, 180, 170, 160, 150]
-    },
-    {
-      name: "item4",
-      textName: 'Значение4',
-      arr: [200, 190, 180, 170, 160, 150]
-    }
-  ]
-}

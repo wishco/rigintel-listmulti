@@ -43,7 +43,7 @@
       // border: solid 2px var(--color-elements-main);
     }
   }
-  &__ul li {
+  &__li {
     position: relative;
     white-space: nowrap;
 
@@ -88,3 +88,6 @@
   }
 }
 
+.hide {
+  display: none;
+}
