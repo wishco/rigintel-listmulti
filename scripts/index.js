@@ -182,7 +182,16 @@ console.log(dataMain());
 
 
 
-console.log(document.body)
+
+
+// res2 = Object.values(result.value.map((item)=> {
+//   res.push( JSON.parse('{' + item + '}'))
+//   console.log(res)
+// })
+
+
+
+
 
 
 
