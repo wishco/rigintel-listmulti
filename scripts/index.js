@@ -200,35 +200,35 @@ function dataMain() {
   console.log(111111111111111);
   return [
     {
-      name: "item1",
+      id: "item1",
       short: 'знач1',
       text: 'Значение1',
       value: 100
     },
     {
-      name: "item2",
+      id: "item2",
       short: 'знач2',
       text: 'Значение2',
       sub: [
         {
-          name: "sub1-item1",
+          id: "sub1-item1",
           short: 'sub1-знач1',
           text: 'sub1-Значение1',
           value: 1100
         },
         {
-          name: "sub1-item1",
+          id: "sub1-item1",
           short: 'sub1-знач1',
           text: 'sub1-Значение1',
           sub: [
             {
-              name: "sub2-item1",
+              id: "sub2-item1",
               short: 'sub2-знач1',
               text: 'sub2-Значение1',
               value: 2100
             },
             {
-              name: "sub2-item2",
+              id: "sub2-item2",
               short: 'sub2-знач2',
               text: 'sub2-Значение2',
               value: 2200
@@ -236,7 +236,7 @@ function dataMain() {
           ]
         },
         {
-          name: "sub1-item1",
+          id: "sub1-item1",
           short: 'sub1-знач1',
           text: 'sub1-Значение1',
           value: 1300
