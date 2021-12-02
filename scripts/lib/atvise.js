@@ -9,7 +9,7 @@ async function getListStructure(listRoot) {
   // console.log("listRoot", listRoot)
   var objResult = []
   var rootParam = listRoot
-  var paramArray = await getRootArrayFromRootParam(rootParam) // получить массив параметров, из разных типов параметров
+  var paramArray = await getRootObjFromRootParam(rootParam) // получить массив параметров, из разных типов параметров
 
   console.log("paramArray:", paramArray)
   console.log("END:")
@@ -25,11 +25,24 @@ TESTING ? testing(TESTING, root) : getListStructure(root)
 //---------------------------------------------------	
 //---------------------------------------------------	
 
-async function getRootArrayFromRootParam(param) {
+// isEmpty - пусто
+// isArrayAtvise - массив объектов Atvise
+// isArray - обычный массив значений
+// isBasic - обычное значение (string, number и пр...)
+async function getRootObjFromRootParam(param) {
   // если param не объект, то входящий string пробуем преобразовать обработки
 
-  // 1.
-  // console.log("STEP 1");
+  var objParam = await getTypeAndValueFromParam(param)
+  switch (objParam.type) {
+    case 'isEmpty':
+      return { id: getId(), text: webMI.query["caption"], value: webMI.query["caption"] }
+      break
+  }
+
+
+
+
+
   // if (await getTypeParam(param) === "isEmpty") {
   //   console.log("Параметр не задан!!!!!!!!!!!!!!!!")
   //   return { id: getId(), text: webMI.query["caption"], value: webMI.query["caption"] }
@@ -91,91 +104,66 @@ async function getRootArrayFromRootParam(param) {
   //   return isArrayCurrParam // ВЫХОДИМ!, возвращам массив
   // }
 
-  var res1 = await getTypeAndValueFromParam(param)
-  console.log("+++++++++++")
-  console.log("getTypeParam: ", res1)
-  console.log("+++++++++++")
+
+  // var res1 = await getTypeAndValueFromParam(param)
+  // console.log("+++++++++++")
+  // console.log("getTypeParam: ", res1)
+  // console.log("+++++++++++")
 
 
-  // если есть вложенные элементы (переменная ATVISE)
-  // var paramValue3 = paramRoot1.value
-
-  // if (Array.isArray(paramValue3)) {
-  //   var u1 = paramValue3.map((_el) => {
-  //     console.log(_el)
-  //     var _elParse = JSON.parse(_el)
-  //     return _elParse
-  //   })
-  //   console.log("paramValue Arrray", true)
-  //   console.log("paramValue Arrray", u1)
-  // } else {
-  //   console.log("paramValue Arrray", false)
-  // }
-
-
-  // если нет вложенных элементов
-  // console.log("paramRoot", paramRoot1)
-  //
 
 
 }
 
-!!!!!!!!!!!!!!!утром начать с  138 строки, varFromParam1 перебрать типы
-
+// получить тип и значение по входному параметру
 async function getTypeAndValueFromParam(param) {
 
-  if (param === "") return { type: "isEmpty", value: "" }
-  if (typeof param === "object") return { type: "isObject", value: param }
+  // возможные возвращаемые типы:
+  // isEmpty - пусто
+  // isArrayAtvise - массив объектов Atvise
+  // isArray - обычный массив значений
+  // isBasic - обычное значение (string, number и пр...)
 
-  var parseParam = parseJSON_ToArray(param)
-  if (parseParam) return { type: "isArray", value: parseParam }
+  if (param === "") return { type: "isEmpty", value: "" } // если в компоненте, значение равно пустой строки (параметр не задан)
+  if (typeof param === "object") return { type: "isArrayAtvise", value: param } // если в компоненте, значение параметра задано при помощи 'Use Global Parameters', то это обычный array массив объектов
 
-  var varFromParam1 = (await getAsyncParam(param)).value // если входящий параметр переменная, её значение / иначе null
-  if (!varFromParam1) return { type: "isBasic", value: param } // если string number и пр... всё в basic
+  var parse = parseJSON_ToArray(param) // если параметр из строки является массив, получаем 'массив' иначе получаем 'null'
+  if (parse) return { type: "isArray", value: parse } // если в компоненте, значение параметра задано как строка, со значением Массив, например '[1,2,3,4]'
 
-  if (varFromParam1 === "") return { type: "isEmpty", value: "" }
-  if (typeof varFromParam1 === "number") return { type: "isBasic", value: varFromParam1 }
+  var varFromParam1 // инициализация первой переменной, переменная хранит значение или флаг отсутствия её значения
+  varFromParam1 = (await getAsyncParam(param)).value // если входящий параметр переменная, это её значение / иначе входящий параметр не переменная и возвращаем 'null'
 
-  parseParam = parseJSON_ToArray(varFromParam1)
-  if (parseParam) return { type: "isArray", value: parseParam }
-  parseParam = parseAtviseJSON_ToArray(varFromParam1)
-  if (parseParam) return { type: "isArray", value: parseParam }
+  if ((!varFromParam1) && (varFromParam1 !== "")) return { type: "isBasic", value: param } // если входящий параметр не переменная, и выше отсекли другие варианты, то параметр является: string number и пр... всё в basic
+  if (varFromParam1 === "") return { type: "isEmpty", value: "" } // если входящий параметр переменная и значение равно пустой строки (параметр не задан)
+  if (typeof varFromParam1 === "number") return { type: "isBasic", value: varFromParam1 } // если входящий параметр переменная и значение равно числу
 
-  console.log("!!!!!!!!!!!!!!!!parseParam", parseParam);
-
-  var varFromParam2 = varFromParam1 && (await getAsyncParam(varFromParam1)).value || null // если входящий параметр переменная, и у неё строка, тоже переменная, то тут её значение / иначе null
-  var varFromParamCalc = varFromParam2 && varFromParam2 || varFromParam1
-
-  if (varFromParam1 && !varFromParam2)
-
-    if (varFromParam2 === "") return { type: "isEmpty", value: "" }
-  if (typeof varFromParam2 === "number") return { type: "isNumber", value: varFromParam1 }
-
-
-  console.log("!!!!!!!!!!!!!!!!!!!4-1", param);
-  console.log("!!!!!!!!!!!!!!!!!!!4-2", varFromParam1);
-  console.log("!!!!!!!!!!!!!!!!!!!4-3", await getAsyncParam(varFromParam1));
-
-  console.log("!!!!!!!!!!!!!!!!!!!5", param);
-
-  console.log("!!!!!!!!!!!!!!!!!!!6", param);
-  if ((varFromParam1 === "") || (varFromParam2 === "")) return { type: "isEmpty", value: "" }
-
-  console.log("varFromParam1", varFromParam1);
-  console.log("varFromParam2", varFromParam2);
-  console.log("varFromParamCalc", varFromParamCalc);
-  console.log("!!!!!!!!!!!!!!!!!!!5", param);
-
-  if (varFromParamCalc) {
-    return { type: "isVar", value: varFromParamCalc }
+  parse = parseJSON_ToArray(varFromParam1) // если входящий параметр переменная и значение является массивом, получаем 'массив' иначе получаем 'null'
+  if (parse) { // если переменная содержит массив
+    return { type: "isArray", value: parse }
+  }
+  parse = parseAtviseJSON_ToArray(varFromParam1) // если входящий параметр переменная и значение является массивом Atvise, получаем 'массив' иначе получаем 'null'
+  if (parse) { // если переменная содержит массив
+    return { type: "isArrayAtvise", value: parse }
   }
 
-  // все другие варианты считаем, базовые и возвращаем просто их значения (типа стринг, число...)
-  return { type: "isBasic", value: param }
+  var varFromParam2 = varFromParam1 && (await getAsyncParam(varFromParam1)).value || null // если входящий параметр переменная, и у неё строка, тоже переменная, то тут её значение / иначе null
+  if (!varFromParam2) { // если вторая переменная не задана, то возвращаем значение первой переменной с базовой структурой (string, number и пр.)
+    return { type: "isBasic", value: varFromParam1 }
+  }
 
+  if (varFromParam2 === "") return { type: "isEmpty", value: "" } // если вторая переменная задана и значение равно пустой строки (параметр не задан)
+  if (typeof varFromParam2 === "number") return { type: "isBasic", value: varFromParam1 } // если вторая переменная задана и значение равно числу
+  parse = parseJSON_ToArray(varFromParam2) // если во второй переменной значение является массивом, получаем 'массив' иначе получаем 'null'
+  if (parse) {
+    return { type: "isArray", value: parse } // если переменная содержит массив
+  }
+  parse = parseAtviseJSON_ToArray(varFromParam2) // если во второй переменной значение является массивом Atvise, получаем 'массив' иначе получаем 'null'
+  console.log("parseAtviseJSON_ToArray", parse);
+  if (parse) {
+    return { type: "isArrayAtvise", value: parse } // если переменная содержит массив
+  }
+  return { type: "isBasic", value: varFromParam2 }
 }
-
-
 
 
 
@@ -192,9 +180,6 @@ function parseJSON_ToArray(param) {
   } catch (error) {
     parseResult = ""
   }
-
-  console.log(param);
-  console.log("fffffffffffffffffffff111111111111111", Array.isArray(parseResult));
   return Array.isArray(parseResult) ? parseResult : null // возвращаем массив или null
 }
 
@@ -203,14 +188,11 @@ function parseAtviseJSON_ToArray(param) {
   try {
     parseResult = param.map((el) => {
       var arr = JSON.parse("{" + el + "}")
-      return Object.values(arr)
+      return Object.values(arr)[0]
     })
   } catch (error) {
     parseResult = ""
   }
-
-  console.log(param);
-  console.log("fffffffffffffffffffff22222222222", Array.isArray(parseResult));
   return Array.isArray(parseResult) ? parseResult : null // возвращаем массив или null
 }
 
@@ -286,14 +268,18 @@ async function testing(step, root) {
       testingComment = "тестируем параметр, значение - переменная со значением: Кактус"
       break
     case 8:
+      testingParam = 'AGENT.OBJECTS._wishco.add1.forTest.ArrayStringValue'
+      testingComment = "тестируем параметр, значение - переменная со значением: строка-массив значений"
+      break
+    case 9:
       testingParam = 'AGENT.OBJECTS._wishco.add1.forTest.globalVarStringValue'
       testingComment = "тестируем параметр, значение - переменная со значением другой переменной"
       break
-    case 9:
-      testingParam = 'SYSTEM.GLOBALS.TTT.sub2'
-      testingComment = "тестируем параметр, значение - переменная со значением другой переменной"
-      break
     case 10:
+      testingParam = 'SYSTEM.GLOBALS.TTT.sub2'
+      testingComment = "тестируем параметр, значение - переменная со значением из глобального объекта"
+      break
+    case 11:
       testingParam = test_vars().arr2
       testingComment = "тестируем параметр, значение - массив числовой: " + testingParam
       break
