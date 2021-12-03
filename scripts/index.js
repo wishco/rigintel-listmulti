@@ -1,4 +1,7 @@
 
+
+
+
 var SELECTOR_NEXT_ACTIVE = 'ul' // перебор по ноде, вглубь (сокращаем ноду) т.е. идём к потомку
 var SELECTOR_PREVIOS_ACTIVE = 'ul' // перебор по ноде, вверх (увеличиваем ноду) т.е. идём к parent
 var SELECTOR_PREVIOS_TEXT = 'li' // перебор по ноде, вверх (увеличиваем ноду) т.е. идём к parent
@@ -9,6 +12,8 @@ var SELECTOR_IN = 'text' // селектор, откуда будем брать
 var PREFIX_VALUE = 'value' // префикс value
 var PREFIX_SHORT = 'short' // префикс short 
 var SHORT_SEPARATOR = "/"
+
+var SUB = 'sub'
 
 var listmultiStructure = new createBlankBlock('listmulti')
 var listmultiAll = document.querySelectorAll(listmultiStructure.getClassName()) // .listmulti
@@ -161,35 +166,230 @@ var handlerClick = function (e) {
   }
 }
 
-function createStructureHtmlFromObject(mainNode) {
+
+
+
+
+
+
+
+// "caption": {
+//     "id": "caption",
+//   "user": {
+//     "text": "Параметр задан оператором",
+//     "value": "427",
+//     "short": "Пусто",
+//   },
+//   "defaultOn": true,
+//   "default": {
+//     "text": "Параметр не задан",
+//     "value": "",
+//     "short": "Пусто",
+//   }
+// },
+
+function createStructureHtmlFromObject(mainNode, stucture) {
   var newDiv = document.createElement('div')
   newDiv.innerHTML = getTemplateBlank()
   newDiv.classList.add(this.getClass())
-  mainNode.append(newDiv)
+  mainNode.prepend(newDiv)
+
+  mainNode.append(getHtmlItems.bind(this)(stucture))
+
+  var nodeValue = newDiv.querySelector(this.getClassName('value'))
+  var isDefaultOn = stucture.caption.defaultOn
+  var defaultCaption = stucture.caption.default
+  var userSelectCaption = stucture.caption.user
+  defaultCaption.short = ""
+  var captionText = isDefaultOn && (defaultCaption.short && defaultCaption.short || defaultCaption.text) || (userSelectCaption.short && userSelectCaption.short || userSelectCaption.text)
+
+  var titleDefault = defaultCaption.value && (defaultCaption.text + ": " + defaultCaption.value) || defaultCaption.text
+  var titleUser = userSelectCaption.value && (userSelectCaption.text + ": " + userSelectCaption.value) || userSelectCaption.text
+  newDiv.title = isDefaultOn && titleDefault || titleUser
+  // debugger
+
+  nodeValue.innerHTML = captionText
+  nodeValue.setAttribute('title', "1111111111111111")
+
+  console.log('newDiv', newDiv);
+
+  // var t = mainNode.querySelector(".listmulti__value")
+  // var t = mainNode.querySelector(".listmulti__value")
 
   console.log("createStructureHtmlFromObject");
   console.log(this);
 }
+//------------------------------------------
+// занимаемся разметкой
+
+function getHtmlItems(stucture) {
+  var result = null
+
+  function getWrapperElements(index) {
+    var itemWrapper = document.createElement('ul')
+    var elemClassName = this.getClass("ul")
+    var modifierClassName = this.getClass("ul", "sub" + index)
+    itemWrapper.classList.add(...[elemClassName, modifierClassName])
+    return itemWrapper
+  }
+
+
+  console.log("stucturestucturestucture", stucture)
+
+  function getHtmlItemFromObj(arr) {
+    getWrapperElements.bind(this)(arr)
+  }
+
+  result = getWrapperElements.bind(this)(1)
+
+  var result2 = getHtmlItemFromObj.bind(this)(2)
+
+  console.log("sssssssssssssssssssssssssss");
+  console.log(result);
+  console.log(result2);
+
+  return result
+}
+
+
+function testObjHtml() {
+  return {
+    "caption": {
+      "user": {
+        "id": "id_user",
+        "text": "Насос 1 - 200",
+        "value": "200",
+        "short": "Пусто",
+      },
+      "defaultOn": true,
+      "default": {
+        "id": "id_user",
+        "text": "Параметр не задан",
+        "value": "",
+        "short": "Пусто",
+      },
+      "out": {
+        "text": "",
+        "value": "",
+        "short": "",
+      }
+    },
+    "items": [
+      {
+        "id": "pumpU8-6M2A",
+        "short": "U8-6M2A",
+        "text": "Насос - pumpU8-6M2A",
+        "value": "Recursions value!!!"
+      },
+      {
+        "id": "pumpU8-7M",
+        "short": "U8-7M",
+        "text": "Насос - pumpU8-7M",
+        "value": "Recursions value!!!"
+      },
+      {
+        "id": "pumpUNB600",
+        "short": "UNB600",
+        "text": "Насос - pumpUNB600",
+        "value": "Recursions value!!!"
+      },
+      {
+        "id": "pump4",
+        "short": "p4",
+        "text": "Насос - P4",
+        "value": [
+          {
+            "id": 0,
+            "text": 200,
+            "value": 200
+          },
+          {
+            "id": 1,
+            "text": 190,
+            "value": 190
+          },
+          {
+            "id": 2,
+            "text": 180,
+            "value": 180
+          },
+          {
+            "id": 3,
+            "text": 170,
+            "value": 170
+          },
+          {
+            "id": 4,
+            "text": 160,
+            "value": 160
+          },
+          {
+            "id": 5,
+            "text": 150,
+            "value": 150
+          }
+        ]
+      },
+      {
+        "id": "pump5",
+        "short": "p5",
+        "text": "Насос - P5",
+        "value": "100"
+      }
+    ]
+  }
+}
+
+
 
 var mainNode = document.querySelector('.wrapper1')
-createStructureHtmlFromObject.bind(listmultiStructure)(mainNode)
-
-var t = mainNode.querySelector(".listmulti__value")
-console.log(t);
-
-console.log(dataMain());
+var structureComponent = testObjHtml()
+createStructureHtmlFromObject.bind(listmultiStructure)(mainNode, structureComponent)
 
 
 
 
+//console.log(dataMain());
 
 
-// res2 = Object.values(result.value.map((item)=> {
-//   res.push( JSON.parse('{' + item + '}'))
-//   console.log(res)
-// })
 
 
+
+//------------------------------------------
+function getTemplateItemWrapper() {
+  `<ul class='listmulti__ul'>
+  </ul>`
+}
+
+function getTemplateItem() {
+  `<li class='listmulti__li'>
+    <a class="listmulti__text" href='#'></a>
+  </li>`
+}
+
+function getTemplateBlank() {
+  return `
+ <div data-listmulti-out="data-listmulti-out" class="listmulti__box">
+   <a class="listmulti__value"></a>
+   <div class="listmulti__svg-select">
+     <svg class="svg-select" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="15px" height="5px" viewBox="0 0 0.9 0.3">
+       <path class="svg-select__path" d="M0.4 0.3l-0.4 -0.3c0.3,0 0.6,0 0.9,0 -0.1,0.1 -0.3,0.2 -0.5,0.3z"/>
+     </svg>
+   </div>
+ </div>
+`
+}
+
+
+
+
+
+function fh_linkHandler(el) {
+  var currHandler = handlerClick.bind(listmultiStructure)
+  el.addEventListener('click', currHandler, false)
+}
+// Добавляем, обработчики событий на блоки
+listmultiAll.forEach(fh_linkHandler.bind(this))
 
 
 
@@ -251,42 +451,3 @@ function dataMain() {
     },
   ]
 }
-
-// sub: {
-//   values: [200, 190, 180, 170, 160, 150],
-// }
-
-function getTemplateItemWrapper() {
-  `<ul class='listmulti__ul'>
-  </ul>`
-}
-
-function getTemplateItem() {
-  `<li class='listmulti__li'>
-    <a class="listmulti__text" href='#'></a>
-  </li>`
-}
-
-function getTemplateBlank() {
-  return `
- <div data-listmulti-out="data-listmulti-out" class="listmulti__box">
-   <a class="listmulti__value"></a>
-   <div class="listmulti__svg-select">
-     <svg class="svg-select" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="15px" height="5px" viewBox="0 0 0.9 0.3">
-       <path class="svg-select__path" d="M0.4 0.3l-0.4 -0.3c0.3,0 0.6,0 0.9,0 -0.1,0.1 -0.3,0.2 -0.5,0.3z"/>
-     </svg>
-   </div>
- </div>
-`
-}
-
-
-
-
-
-function fh_linkHandler(el) {
-  var currHandler = handlerClick.bind(listmultiStructure)
-  el.addEventListener('click', currHandler, false)
-}
-// Добавляем, обработчики событий на блоки
-listmultiAll.forEach(fh_linkHandler.bind(this))

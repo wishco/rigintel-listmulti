@@ -14,9 +14,12 @@ async function getListStructure(listRoot) {
   // console.log("listRoot", listRoot)
   var objResult = []
   var rootParam = listRoot
-  var paramArray = await getRootObjFromRootParam(rootParam) // получить массив параметров, из разных типов параметров
+  var objForHtml = await getRootObjFromRootParam(rootParam) // получить массив параметров, из разных типов параметров
 
-  console.log("paramArray:", paramArray)
+  var html = getHtmlFromObj(objForHtml)
+
+
+  console.log("objForHtml:", objForHtml)
   console.log("END:")
 }
 
@@ -30,6 +33,12 @@ TESTING ? testing(TESTING, root) : getListStructure(root)
 //---------------------------------------------------	
 //---------------------------------------------------	
 
+
+// получить полный html объекта, из входного объекта
+function getHtmlFromObj() {
+  var h = `<div>TESTING!</div>`
+  return
+}
 
 // получить root объект исходя из типа параметра
 async function getRootObjFromRootParam(param) {
@@ -63,7 +72,7 @@ async function getRootObjFromRootParam(param) {
       break
   }
 
-  console.log("objParam", objParam);
+  console.log("objResult", objResult);
 
   return objResult
 
@@ -72,34 +81,41 @@ async function getRootObjFromRootParam(param) {
 
 async function convertAtviseArrayToNormalArray(atviseArray) {
 
-  async function gogi(el) {
+  function getArray() {
+
+  }
+
+  async function getElemArr(el) {
     obj = await getTypeAndValueFromParam(el.value)
     var resultMapEl = null
     var type = obj.type
     console.log("obj.type", type)
 
     if (type === IS_EMPTY) resultMapEl = el
-
     if (type === IS_BASIC) resultMapEl = el
-
     if (type === IS_ARRAY) {
       var arrValue = obj.value.map((_el) => {
         return { id: getId(), text: _el, value: _el }
       })
-      console.log("IS_ARRAY!!!!!!!!!!!!!!!!!!!!!!!!!!", obj.value);
-      console.log({ ...el, value: arrValue });
-      console.log("IS_ARRAY!!!!!!!!!!!!!!!!!!!!!!!!!!", obj.value);
       resultMapEl = { ...el, value: arrValue }
     }
-
+    console.log(11111111111);
     if (type === IS_ATVISE_ARRAY) {
-      resultMapEl = { val: 1111, value: 11111111111 }
+      var v = []
+      // v = await getElemArr(el.value)
+      v = "Recursions value!!!"
+      resultMapEl = { ...el, value: v }
     }
-    console.log("resultMapElresultMapElresultMapElresultMapElresultMapEl", resultMapEl);
+    // console.log("resultMapElresultMapElresultMapElresultMapElresultMapEl", resultMapEl);
     return resultMapEl
   }
 
-  var result = await atviseArray.map(gogi)
+  // var result = atviseArray.map(getElemArr)
+  var result = []
+  for (var item of atviseArray) {
+    result.push(await getElemArr(item))
+  }
+
   console.log("objobjobjobjobjobjobjobjobjobjobjobjobj", obj);
   console.log("convertAtviseArrayToNormalArray", result);
 
@@ -184,22 +200,49 @@ function parseAtviseJSON_ToArray(param) {
 }
 
 // получить параметр, ассинхронно
-async function getAsyncParam(param) {
+async function getAsyncParam2(param) {
   var promise = new Promise((resolve, reject) => {
-    setTimeout(() => {
-      webMI.data.read(param, (resultParam) => {
-        resolve(resultParam)
-      })
-    }, 10)
+    webMI.data.read(param, (resultParam) => {
+      resolve(resultParam)
+    })
 
   })
-  // console.log(promise);
-  // return promise
-  return promise.then((res) => {
-    console.log("res55555555555555555555555", res);
-    return res
-  }
+  return promise
+
 }
+
+async function getAsyncParam(param) {
+  var res = await getAsyncParam2(param)
+  console.log("ppppppppppppppppppp", res);
+  return res
+}
+
+
+
+
+
+// function runOPCUAclient() {
+//   return new Promise((resolve, reject) => {
+//     OPCUAclient.on("connection", function () {
+//       resolve(console.log(OPCUAclient.pid, "connected"));
+//     });
+//     OPCUAclient.on("close", function (code) {
+//       reject(console.log("child OPCUAclient process exited with code " + code));
+//     });
+//   });
+// }
+
+// async function run() {
+//   await runOPCUAclient();
+// }
+// run()
+
+
+
+
+
+
+
 
 // ==============================
 // тестируем элемент
